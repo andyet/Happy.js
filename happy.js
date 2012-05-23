@@ -63,6 +63,7 @@
           required = !!el.get(0).attributes.getNamedItem('required') || opts.required,
           password = (field.attr('type') === 'password'),
           arg = isFunction(opts.arg) ? opts.arg() : opts.arg,
+          // @thomas: forked: called in two places
           clearError = function() {
               temp = errorEl.get(0);
               // this is for zepto
