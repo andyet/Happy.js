@@ -2,6 +2,25 @@
   function trim(el) {
     return (''.trim) ? el.val().trim() : $.trim(el.val());
   }
+  // @thomas: forked: provide a means to do validation without actual submission
+  $.fn.now = function(onSuccess) {
+      var that = this;
+      var overrideSubmit = function(event) {
+
+          event.preventDefault();
+          
+          // do this for now
+          var result = $(that).find(".unhappyMessage").length === 0;
+          
+          onSuccess(result);
+      };
+      
+      $(this).unbind('submit', overrideSubmit);
+      $(this).bind('submit', overrideSubmit);
+      
+      $(this).submit();
+  };
+  
   $.fn.isHappy = function (config) {
     var fields = [], item;
     
@@ -43,7 +62,19 @@
           temp, 
           required = !!el.get(0).attributes.getNamedItem('required') || opts.required,
           password = (field.attr('type') === 'password'),
-          arg = isFunction(opts.arg) ? opts.arg() : opts.arg;
+          arg = isFunction(opts.arg) ? opts.arg() : opts.arg,
+          clearError = function() {
+              temp = errorEl.get(0);
+              // this is for zepto
+              if (temp.parentNode) {
+                temp.parentNode.removeChild(temp);
+              }
+              // @thomas: forked: always clear error and not just append
+              var id = errorEl.get(0).id;
+              $(el.get(0).parentNode).find('#'+id).remove();
+              
+              el.removeClass('unhappy');
+          };
         
         // clean it or trim it
         if (isFunction(opts.clean)) {
@@ -68,15 +99,12 @@
         }
         
         if (error) {
+          clearError();
+          
           el.addClass('unhappy').before(errorEl);
           return false;
         } else {
-          temp = errorEl.get(0);
-          // this is for zepto
-          if (temp.parentNode) {
-            temp.parentNode.removeChild(temp);
-          }
-          el.removeClass('unhappy');
+          clearError();
           return true;
         }
       };
@@ -90,6 +118,8 @@
     if (config.submitButton) {
       $(config.submitButton).click(handleSubmit);
     } else {
+      this.unbind('submit'); // @thomas :forked: don't re-register listeners
+      
       this.bind('submit', handleSubmit);
     }
     return this;
