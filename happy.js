@@ -1,4 +1,5 @@
-(function($){
+
+n($){
   function trim(el) {
     return (''.trim) ? el.val().trim() : $.trim(el.val());
   }
@@ -10,7 +11,7 @@
           event.preventDefault();
           
           // do this for now
-          var result = $(that).find(".unhappyMessage").length === 0;
+          var result = $(that).find(".unhappy").length === 0;
           
           onSuccess(result);
       };
@@ -63,6 +64,7 @@
           required = !!el.get(0).attributes.getNamedItem('required') || opts.required,
           password = (field.attr('type') === 'password'),
           arg = isFunction(opts.arg) ? opts.arg() : opts.arg,
+              
           // @thomas: forked: called in two places
           clearError = function() {
               temp = errorEl.get(0);
@@ -73,6 +75,7 @@
               // @thomas: forked: always clear error and not just append
               var id = errorEl.get(0).id;
               $(el.get(0).parentNode).find('#'+id).remove();
+              $(el.get(0).parentNode).find('.unhappy').remove();
               
               el.removeClass('unhappy');
           };
