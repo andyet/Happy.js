@@ -1,19 +1,13 @@
-
-n($){
+(function($){
   function trim(el) {
     return (''.trim) ? el.val().trim() : $.trim(el.val());
   }
   // @thomas: forked: provide a means to do validation without actual submission
-  $.fn.now = function(onSuccess) {
-      var that = this;
+  $.fn.now = function() {
       var overrideSubmit = function(event) {
 
           event.preventDefault();
-          
-          // do this for now
-          var result = $(that).find(".unhappy").length === 0;
-          
-          onSuccess(result);
+
       };
       
       $(this).unbind('submit', overrideSubmit);
@@ -41,6 +35,8 @@ n($){
       } else if (config.testMode) {
         if (window.console) console.warn('would have submitted');
         return false;
+      } else if (!errors) {
+          if(isFunction(config.happy)) config.happy();
       }
     }
     function isFunction (obj) {
@@ -75,7 +71,7 @@ n($){
               // @thomas: forked: always clear error and not just append
               var id = errorEl.get(0).id;
               $(el.get(0).parentNode).find('#'+id).remove();
-              $(el.get(0).parentNode).find('.unhappy').remove();
+              $(el.get(0).parentNode).find('.unhappy').removeClass('unhappy');
               
               el.removeClass('unhappy');
           };
