@@ -2,17 +2,8 @@
   function trim(el) {
     return (''.trim) ? el.val().trim() : $.trim(el.val());
   }
-  // @thomas: forked: provide a means to do validation without actual submission
+  // @thomas: deprecated
   $.fn.now = function() {
-      var overrideSubmit = function(event) {
-
-          event.preventDefault();
-
-      };
-      
-      $(this).unbind('submit', overrideSubmit);
-      $(this).bind('submit', overrideSubmit);
-      
       $(this).submit();
   };
   
@@ -22,7 +13,7 @@
     function getError(error) {
       return $('<span id="'+error.id+'" class="unhappyMessage">'+error.message+'</span>');
     }
-    function handleSubmit() {
+    function handleSubmit(event) {
       var errors = false, i, l;
       for (i = 0, l = fields.length; i < l; i += 1) {
         if (!fields[i].testValid(true)) {
@@ -38,6 +29,9 @@
       } else if (!errors) {
           if(isFunction(config.happy)) config.happy();
       }
+      
+      // @thomas: make this optional in the future
+      event.preventDefault();
     }
     function isFunction (obj) {
       return !!(obj && obj.constructor && obj.call && obj.apply);
@@ -64,14 +58,17 @@
           // @thomas: forked: called in two places
           clearError = function() {
               temp = errorEl.get(0);
-              // this is for zepto
-              if (temp.parentNode) {
-                temp.parentNode.removeChild(temp);
-              }
+              
               // @thomas: forked: always clear error and not just append
               var id = errorEl.get(0).id;
               $(el.get(0).parentNode).find('#'+id).remove();
               $(el.get(0).parentNode).find('.unhappy').removeClass('unhappy');
+              
+              // this is for zepto
+              if (temp.parentNode) {
+                temp.parentNode.removeChild(temp);
+              }
+              
               
               el.removeClass('unhappy');
           };
@@ -108,7 +105,10 @@
           return true;
         }
       };
-      field.bind(config.when || 'blur', field.testValid);
+      
+      // @thomas: make this optional in the future. we don't need it 
+//      field.unbind(config.when || 'blur', field.testValid);
+//      field.bind(config.when || 'blur', field.testValid);
     }
     
     for (item in config.fields) {
