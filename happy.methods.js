@@ -5,7 +5,7 @@ var happy = {
   
   // matches mm/dd/yyyy (requires leading 0's (which may be a bit silly, what do you think?)
   date: function (val) {
-    return /^(?:0[1-9]|1[0-2])\/(?:0[1-9]|[12][0-9]|3[01])\/(?:\d{4})/.test(val);
+   return /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(val);
   },
   
   email: function (val) {
