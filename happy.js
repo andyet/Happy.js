@@ -36,8 +36,8 @@
     function isFunction (obj) {
       return !!(obj && obj.constructor && obj.call && obj.apply);
     }
-    function processField(opts, selector) {
-      var field = $(selector),
+    function processField(opts, selector, scope) {
+      var field = $(config.scope).find(selector),
         error = {
           message: opts.message,
           id: selector.slice(1) + '_unhappy'
@@ -112,7 +112,7 @@
     }
     
     for (item in config.fields) {
-      processField(config.fields[item], item);
+      processField(config.fields[item], item, config.scope);
     }
     
     if (config.submitButton) {
