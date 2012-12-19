@@ -10,6 +10,10 @@ code instead of its default behavior.
 
 -Provides a 'scope' input to take in your backbone view's scoped el.
 
+-Don't revalidate upon blur; do it on submit.
+
+-Clear out old errors.
+
 <pre>
 this.$el.find('#id').isHappy({
     unHappy: function() {}, // Callback when validation fails.
