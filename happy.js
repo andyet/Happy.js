@@ -8,10 +8,10 @@
     function getError(error) {
       return $('<span id="'+error.id+'" class="unhappyMessage">'+error.message+'</span>');
     }
-    function handleSubmit() {
+    function handleSubmit(e) {
       var errors = false, i, l;
       for (i = 0, l = fields.length; i < l; i += 1) {
-        if (!fields[i].testValid(true)) {
+        if (!fields[i].testValid(e, true)) {
           errors = true;
         }
       }
@@ -35,7 +35,7 @@
         errorEl = $(error.id).length > 0 ? $(error.id) : getError(error);
         
       fields.push(field);
-      field.testValid = function (submit) {
+      field.testValid = function (e, submit) {
         var val,
           el = $(this),
           gotFunc,
@@ -44,7 +44,7 @@
           required = !!el.get(0).attributes.getNamedItem('required') || opts.required,
           password = (field.attr('type') === 'password'),
           arg = isFunction(opts.arg) ? opts.arg() : opts.arg;
-        
+        submit = (submit === undefined)?false: submit;
         // clean it or trim it
         if (isFunction(opts.clean)) {
           val = opts.clean(el.val());
@@ -68,6 +68,10 @@
         }
         
         if (error) {
+          //for zepto
+          event.preventDefault();
+          event.stopPropagation();
+          
           el.addClass('unhappy').before(errorEl);
           return false;
         } else {
