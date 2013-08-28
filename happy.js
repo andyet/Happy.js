@@ -58,7 +58,7 @@
         el.val(val);
         
         // get the value
-        gotFunc = ((val.length > 0 || required === 'sometimes') && isFunction(opts.test));
+        gotFunc = ((val.length > 0 || required === true) && isFunction(opts.test));
         
         // check if we've got an error on our hands
         if (submit === true && required === true && val.length === 0) {
