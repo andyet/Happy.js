@@ -84,7 +84,10 @@
           return true;
         }
       };
-      field.bind(config.when || 'blur', field.testValid);
+      field.bind(config.when || 'blur', function(e){
+          field.testValid(e, false);
+          return false; //unless we want to continue propagating this event.
+      });
     }
     
     for (item in config.fields) {
