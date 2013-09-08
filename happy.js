@@ -8,10 +8,10 @@
     function getError(error) {
       return $('<span id="'+error.id+'" class="unhappyMessage">'+error.message+'</span>');
     }
-    function handleSubmit() {
+    function handleSubmit(e) {
       var errors = false, i, l;
       for (i = 0, l = fields.length; i < l; i += 1) {
-        if (!fields[i].testValid(true)) {
+        if (!fields[i].testValid(e, true)) {
           errors = true;
         }
       }
@@ -35,7 +35,7 @@
         errorEl = $(error.id).length > 0 ? $(error.id) : getError(error);
         
       fields.push(field);
-      field.testValid = function (submit) {
+      field.testValid = function (e, submit) {
         var val,
           el = $(this),
           gotFunc,
@@ -44,7 +44,7 @@
           required = !!el.get(0).attributes.getNamedItem('required') || opts.required,
           password = (field.attr('type') === 'password'),
           arg = isFunction(opts.arg) ? opts.arg() : opts.arg;
-        
+        submit = (submit === undefined)?false: submit;
         // clean it or trim it
         if (isFunction(opts.clean)) {
           val = opts.clean(el.val());
@@ -58,7 +58,7 @@
         el.val(val);
         
         // get the value
-        gotFunc = ((val.length > 0 || required === 'sometimes') && isFunction(opts.test));
+        gotFunc = ((val.length > 0 || required === true) && isFunction(opts.test));
         
         // check if we've got an error on our hands
         if (submit === true && required === true && val.length === 0) {
@@ -68,6 +68,10 @@
         }
         
         if (error) {
+          //for zepto
+          event.preventDefault();
+          event.stopPropagation();
+          
           el.addClass('unhappy').before(errorEl);
           return false;
         } else {
@@ -80,7 +84,10 @@
           return true;
         }
       };
-      field.bind(config.when || 'blur', field.testValid);
+      field.bind(config.when || 'blur', function(e){
+          field.testValid(e, false);
+          return false; //unless we want to continue propagating this event.
+      });
     }
     
     for (item in config.fields) {
